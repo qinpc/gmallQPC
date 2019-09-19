@@ -22,6 +22,10 @@ public interface ManageService {
     //根据三级分类查询平台属性
     List<BaseAttrInfo> getAttrList(String catalog3Id);
 
+
+    //根据 多个属性值查询平台属性
+    List<BaseAttrInfo> getAttrList(List attrValueIdList);
+
     //根据平台属性id 查询平台属性的详情 顺便把该属性的属性值列表也取到
     BaseAttrInfo getBaseAttrInfo(String attrId);
 

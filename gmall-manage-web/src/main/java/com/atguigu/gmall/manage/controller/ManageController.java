@@ -3,9 +3,12 @@ package com.atguigu.gmall.manage.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.atguigu.gmall.bean.*;
+import com.atguigu.gmall.service.ListService;
 import com.atguigu.gmall.service.ManageService;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
@@ -14,6 +17,11 @@ public class ManageController {
 
     @Reference
     ManageService manageService;
+
+    @Reference
+    ListService listService;
+
+
 
     @PostMapping("getCatalog1")
     @ResponseBody
@@ -92,7 +100,32 @@ public class ManageController {
     }
 
 
+    public  String onSaleBySpu(String spuId){
+        // 根据spu 把其下所有sku上架
+        return null;
+    }
 
 
+    //根据SkuId上架
+    @PostMapping("onSale")
+    public  String onSale(@RequestParam("skuId") String skuId){
+
+        SkuInfo skuInfo = manageService.getSkuInfo(skuId);
+
+        SkuLsInfo skuLsInfo = new SkuLsInfo();
+        // 属性拷贝
+        try {
+            BeanUtils.copyProperties(skuLsInfo,skuInfo);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        //
+        listService.saveSkuLsInfo(skuLsInfo);
+
+        return "success";
+
+    }
 
 }
