@@ -6,9 +6,9 @@ import com.atguigu.gmall.bean.SkuLsResult;
 
 public interface ListService {
 
-    public void saveSkuLsInfo(SkuLsInfo skuLsInfo);
+    void saveSkuLsInfo(SkuLsInfo skuLsInfo);
 
-    public SkuLsResult search(SkuLsParams skuLsParams);
+    SkuLsResult search(SkuLsParams skuLsParams);
 
-    public void incrHotScore(String skuId);
+    void incrHotScore(String skuId);
 }

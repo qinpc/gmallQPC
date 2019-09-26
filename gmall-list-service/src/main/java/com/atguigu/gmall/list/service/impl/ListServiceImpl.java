@@ -95,7 +95,6 @@ public class ListServiceImpl implements ListService {
 
 
         String resl = searchSourceBuilder.toString();
-        System.out.println(resl);
         Search.Builder searchBuilder = new Search.Builder(resl);
         Search seach = searchBuilder.addIndex(ES_INDEX).addType(ES_TYPE).build();
 
