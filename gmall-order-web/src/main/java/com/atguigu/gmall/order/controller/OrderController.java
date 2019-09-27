@@ -12,6 +12,7 @@ import com.atguigu.gmall.service.UserService;
 
 import com.atguigu.gmall.util.HttpClientUtil;
 import org.apache.commons.lang3.time.DateUtils;
+import org.junit.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,10 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -137,6 +135,44 @@ public class OrderController {
     public String checkSkuNum(OrderDetail orderDetail){
         String hasStock = HttpClientUtil.doGet("http://www.gware.com/hasStock?skuId=" + orderDetail.getSkuId() + "&num=" + orderDetail.getSkuNum());
         return  hasStock;
+    }
+
+
+
+    //   List  1,2,3,4,5,6,7,8,9    找出 所有能够被3整除的数  放到一个清单里
+    @Test
+    public void  test1(){
+        List<Integer> list= Arrays.asList(1,2,3,4,5,6,7,8,9);
+        // List  rsList=new CopyOnWriteArrayList();   适合多读少写
+        List  rsList=Collections.synchronizedList(new ArrayList<>());  //适合多写少读
+        Stream<CompletableFuture<Boolean>> completableFutureStream = list.stream().map(num ->
+                CompletableFuture.supplyAsync(() -> checkNum(num)).whenComplete((ifPass, ex) -> {
+                    //supplyAsync中 添加异步执行的线程处理任务  //whenComplete 添加线程执行完毕后的造操作  //
+                    if (ifPass) {
+                        rsList.add(num);
+                    }
+                })
+        );   // 流式处理 相当于把list<integer>里的转化为一个  Future数组  ,Future可以理解为一个不知道什么时候执行完的异步结果
+        CompletableFuture[] completableFutures = completableFutureStream.toArray(CompletableFuture[]::new);
+
+        // 归集操作allOf代表此处阻塞 直到线程全部执行完   anyOf代表阻塞到只要有一个执行完就可。
+        CompletableFuture.allOf(completableFutures).join();
+
+        System.out.println(rsList);
+    }
+
+    private  Boolean checkNum(Integer num){
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(num%3==0){
+            return  true;
+        }else {
+            return  false ;
+        }
+
     }
 
 
